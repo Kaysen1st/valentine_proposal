@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Be My Valentine?</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+        
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(45deg, #ff6b6b, #ff8e8e);
+            font-family: 'Poppins', sans-serif;
+            overflow: hidden;
+        }
+
+        .container {
+            text-align: center;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 1;
+        }
+
+        h1 {
+            color: white;
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transform-style: preserve-3d;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, rgba(255,255,255,0.1), rgba(255,255,255,0.2));
+            transform: translateY(-100%);
+            transition: transform 0.3s ease;
+        }
+
+        .btn:hover::before {
+            transform: translateY(0);
+        }
+
+        .yes-btn {
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            color: white;
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.4);
+            transform: translateZ(0);
+            transition: all 0.3s ease;
+            z-index: 1001; /* Always stay on top of the No button */
+            position: relative;
+        }
+
+        .yes-btn:hover {
+            background: linear-gradient(45deg, #45a049, #3d8b40);
+            transform: scale(1.1) translateY(-2px);
+            box-shadow: 0 8px 25px rgba(76, 175, 80, 0.6);
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 5px 15px rgba(76, 175, 80, 0.4);
+            }
+            50% {
+                box-shadow: 0 5px 30px rgba(76, 175, 80, 0.8);
+            }
+            100% {
+                box-shadow: 0 5px 15px rgba(76, 175, 80, 0.4);
+            }
+        }
+
+        .no-btn {
+            background: linear-gradient(45deg, #ff4444, #ff0000);
+            color: white;
+            box-shadow: 0 5px 15px rgba(255, 68, 68, 0.4);
+            transition: all 0.3s ease;
+            will-change: transform, left, top;
+            z-index: 1000;
+            cursor: pointer;
+            width: 140px;
+            height: 60px;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50px;
+            text-align: center;
+            padding: 15px 30px;
+            white-space: nowrap;
+            user-select: none;
+        }
+
+        .no-btn:hover {
+            animation: shake 0.5s ease-in-out;
+            box-shadow: 0 8px 20px rgba(255, 68, 68, 0.6);
+            transform: scale(1.05);
+            background: linear-gradient(45deg, #ff6666, #ff2222);
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0) scale(1.05); }
+            25% { transform: translateX(-5px) rotate(-5deg) scale(1.05); }
+            75% { transform: translateX(5px) rotate(5deg) scale(1.05); }
+        }
+
+        .btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .hearts {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .heart {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: #fff;
+            transform: rotate(45deg);
+            animation: heartFloat 4s ease-in infinite;
+            opacity: 0;
+        }
+
+        .heart::before,
+        .heart::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: #fff;
+            border-radius: 50%;
+        }
+
+        .heart::before {
+            left: -10px;
+        }
+
+        .heart::after {
+            top: -10px;
+        }
+
+        @keyframes heartFloat {
+            0% {
+                transform: rotate(45deg) translateY(0) scale(0);
+                opacity: 0;
+            }
+            20% {
+                opacity: 0.8;
+            }
+            100% {
+                transform: rotate(45deg) translateY(-1000px) scale(1);
+                opacity: 0;
+            }
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            animation: modalPop 0.3s ease-out;
+        }
+
+        @keyframes modalPop {
+            from {
+                transform: scale(0);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .modal-btn {
+            padding: 10px 20px;
+            margin: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .modal-btn:hover {
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="hearts"></div>
+    <div class="container">
+        <h1>Will you be my Valentine? 💝</h1>
+        <div class="buttons">
+            <button class="btn yes-btn" onclick="showLove()">Yes</button>
+            <button class="btn no-btn" onclick="handleNo()">No</button>
+        </div>
+    </div>
+
+    <div class="modal" id="noModal">
+        <div class="modal-content">
+            <h2>Are you sure? 🥺</h2>
+            <p>Think again...</p>
+            <button class="modal-btn yes-btn" onclick="showLove()">Ok, Yes!</button>
+            <button class="modal-btn no-btn" onclick="moveNoButton()">Still No</button>
+        </div>
+    </div>
+
+    <script>
+        let noClickCount = 0;
+        const noModal = document.getElementById('noModal');
+        let yesScale = 1;
+
+        function handleNo() {
+            noClickCount++;
+            if (noClickCount === 1) {
+                noModal.style.display = 'flex';
+            } else {
+                moveNoButton();
+                growYesButton();
+            }
+        }
+
+        function growYesButton() {
+            const yesBtn = document.querySelector('.yes-btn');
+            yesScale += 0.15; // Increase size by 15% each time
+            
+            // Update the yes button size
+            yesBtn.style.transform = `scale(${yesScale})`;
+            yesBtn.style.fontSize = `${1.2 * yesScale}rem`;
+            
+            // Add a pulse animation
+            yesBtn.style.animation = 'pulse 0.5s ease-out';
+            setTimeout(() => {
+                yesBtn.style.animation = '';
+            }, 500);
+        }
+
+        function moveNoButton() {
+            const btn = document.querySelector('.no-btn');
+            const padding = 20; // Padding from screen edges
+            
+            // Get button dimensions
+            const btnWidth = btn.offsetWidth;
+            const btnHeight = btn.offsetHeight;
+            
+            // Calculate maximum coordinates while keeping button fully visible
+            const maxX = Math.max(0, window.innerWidth - btnWidth - padding);
+            const maxY = Math.max(0, window.innerHeight - btnHeight - padding);
+            
+            // Calculate random position within safe bounds
+            const randomX = Math.min(Math.max(padding, Math.random() * maxX), maxX);
+            const randomY = Math.min(Math.max(padding, Math.random() * maxY), maxY);
+            
+            // Create smooth animation
+            btn.style.transition = 'all 0.3s ease';
+            btn.style.position = 'fixed';
+            
+            // Set new position
+            btn.style.left = `${randomX}px`;
+            btn.style.top = `${randomY}px`;
+            
+            // Add a slight rotation for more playful effect
+            const randomRotation = Math.random() * 30 - 15; // Rotate between -15 and 15 degrees
+            btn.style.transform = `rotate(${randomRotation}deg)`;
+            
+            noModal.style.display = 'none';
+
+            // Add a playful bounce effect after moving
+            setTimeout(() => {
+                btn.style.transform += ' scale(1.1)';
+                setTimeout(() => {
+                    btn.style.transform = `rotate(${randomRotation}deg)`;
+                }, 100);
+            }, 300);
+        }
+
+        function showLove() {
+            // Add fade out animation
+            document.body.style.animation = 'fadeOut 0.5s ease-out forwards';
+            setTimeout(() => {
+                window.location.href = '/love';
+            }, 500);
+        }
+
+        function createHearts() {
+            const heartsContainer = document.querySelector('.hearts');
+            const heart = document.createElement('div');
+            heart.classList.add('heart');
+            
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.animationDuration = (Math.random() * 3 + 2) + 's';
+            
+            heartsContainer.appendChild(heart);
+            
+            setTimeout(() => {
+                heart.remove();
+            }, 5000);
+        }
+
+        // Add window resize handler to keep button in bounds
+        window.addEventListener('resize', () => {
+            const btn = document.querySelector('.no-btn');
+            if (btn.style.position === 'fixed') {
+                moveNoButton();
+            }
+        });
+
+        setInterval(createHearts, 300);
+
+        document.querySelector('.modal-btn.no-btn').addEventListener('click', () => {
+            moveNoButton();
+            growYesButton();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Will You Be My Valentine?</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #1DB954;
+            --secondary-color: #1ed760;
+            --background-color: #121212;
+            --surface-color: #282828;
+            --text-color: #FFFFFF;
+            --text-secondary: #b3b3b3;
+            --hover-color: #404040;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            font-family: 'Poppins', sans-serif;
+            background: var(--background-color);
+            color: var(--text-color);
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            margin-bottom: 100px; /* Space for music player */
+        }
+
+        .message {
+            background: var(--surface-color);
+            padding: 2.5rem;
+            border-radius: 8px;
+            max-width: 500px;
+            text-align: center;
+            line-height: 1.8;
+            margin: 2rem auto;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .message-text {
+            color: var(--text-color);
+            font-size: 1.2rem;
+            line-height: 1.8;
+            white-space: pre-line;
+        }
+
+        .music-player {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: #181818;
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border-top: 1px solid #282828;
+        }
+
+        .music-controls {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            min-width: 180px;
+        }
+
+        .music-btn {
+            background: none;
+            border: none;
+            color: #b3b3b3;
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 0;
+            transition: all 0.2s ease;
+        }
+
+        .music-btn:hover {
+            color: var(--text-color);
+            transform: scale(1.1);
+        }
+
+        .music-btn.play-pause {
+            width: 32px;
+            height: 32px;
+            background: var(--text-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--background-color);
+            font-size: 0.8rem;
+        }
+
+        .music-btn.play-pause:hover {
+            transform: scale(1.05);
+            background: var(--text-color);
+        }
+
+        .progress-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .progress-bar {
+            flex: 1;
+            height: 4px;
+            background: #4d4d4d;
+            border-radius: 2px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .progress-bar:hover .progress {
+            background-color: var(--primary-color);
+        }
+
+        .progress {
+            height: 100%;
+            background: #b3b3b3;
+            border-radius: 2px;
+            position: relative;
+        }
+
+        .now-playing {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            min-width: 180px;
+            text-align: right;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 500px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-yes {
+            background: var(--primary-color);
+            color: black;
+            min-width: 160px;
+        }
+
+        .btn-yes:hover {
+            background: var(--secondary-color);
+            transform: scale(1.04);
+        }
+
+        .btn-no {
+            background: transparent;
+            color: var(--text-color);
+            border: 1px solid var(--text-secondary);
+            min-width: 160px;
+        }
+
+        .btn-no:hover {
+            border-color: var(--text-color);
+            transform: scale(1.04);
+        }
+
+        @keyframes heartBeat {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .heart-beat {
+            animation: heartBeat 1s infinite;
+            display: inline-block;
+        }
+
+        .gallery {
+            display: none; /* Hidden by default */
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            padding: 2rem;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        .gallery.visible {
+            display: grid;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .gallery-item {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.5s ease forwards;
+            animation-delay: calc(var(--item-index) * 0.1s);
+        }
+
+        .gallery-item {
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+            background: #1a1a1a;
+            aspect-ratio: 4/3;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .gallery-item:hover {
+            transform: scale(1.02);
+        }
+
+        .gallery-item img, 
+        .gallery-item video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .gallery-item:hover img,
+        .gallery-item:hover video {
+            transform: scale(1.05);
+        }
+
+        .description-overlay {
+            position: absolute;
+            bottom: -100%;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.85);
+            color: white;
+            padding: 1.5rem;
+            transition: bottom 0.3s ease;
+            z-index: 10;
+        }
+
+        .gallery-item.show-description .description-overlay {
+            bottom: 0;
+        }
+
+        .description-text {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+        }
+
+        .gallery-item.show-description .description-text {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .description-text h3 {
+            color: #ff6b6b;
+            margin-bottom: 0.5rem;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .description-text p {
+            margin-bottom: 0.8rem;
+            line-height: 1.6;
+            font-size: 0.95rem;
+            color: #fff;
+        }
+
+        .memory-date {
+            font-style: italic;
+            color: #ffd700;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+        }
+
+        .modal-content {
+            position: relative;
+            max-width: 90vw;
+            max-height: 90vh;
+            margin: auto;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .modal-content img,
+        .modal-content video {
+            max-width: 100%;
+            max-height: 80vh;
+            object-fit: contain;
+            border-radius: 8px;
+        }
+
+        .modal-description {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.85);
+            color: white;
+            padding: 1.5rem;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .modal-content.show-description .modal-description {
+            transform: translateY(0);
+        }
+
+        .modal-description .description-text {
+            opacity: 1;
+            transform: none;
+        }
+
+        @media (max-width: 768px) {
+            .gallery {
+                grid-template-columns: 1fr;
+                padding: 1rem;
+                gap: 1rem;
+            }
+
+            .description-text h3 {
+                font-size: 1.1rem;
+            }
+
+            .description-text p {
+                font-size: 0.9rem;
+            }
+
+            .modal {
+                padding: 1rem;
+            }
+        }
+
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .gallery {
+                grid-template-columns: repeat(2, 1fr);
+                padding: 1.5rem;
+            }
+        }
+
+        @media (min-width: 1025px) {
+            .gallery {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="gallery">
+            <!-- Images will be added here via JavaScript -->
+        </div>
+        
+        <div class="message">
+            <div class="message-text">
+                From the moment I met you,
+                my world became brighter.
+                Every smile, every laugh we share,
+                makes my heart flutter with joy.
+
+                You're not just my love,
+                you're my best friend, my soulmate,
+                and my greatest adventure.
+
+                Will you make me the happiest person
+                by being my Valentine?
+            </div>
+            <div class="buttons">
+                <button class="btn btn-yes" onclick="sayYes()">Yes, I Will! <span class="heart-beat">❤️</span></button>
+                <button class="btn btn-no" onclick="moveButton(this)">No Way</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="music-player">
+        <div class="music-controls">
+            <button class="music-btn" onclick="previousTrack()">
+                <i class="fas fa-step-backward"></i>
+            </button>
+            <button class="music-btn play-pause" onclick="togglePlay()">
+                <i class="fas fa-play" id="playPauseIcon"></i>
+            </button>
+            <button class="music-btn" onclick="nextTrack()">
+                <i class="fas fa-step-forward"></i>
+            </button>
+        </div>
+        
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div class="progress" id="progressBar"></div>
+            </div>
+        </div>
+
+        <div class="now-playing">
+            Now Playing: <span id="currentTrack">Select a song</span>
+        </div>
+    </div>
+
+    <div class="modal" id="photoModal" onclick="closeModal(event)">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal(event)">×</button>
+            <img id="modalImage" src="" alt="Full size photo">
+            <div class="modal-description"></div>
+        </div>
+    </div>
+
+    <script>
+        // Default fallback songs if files are missing
+        const fallbackSongs = {
+            romantic1: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+            romantic2: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+            romantic3: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+            celebration: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'
+        };
+
+        let currentSongIndex = 0;
+        let isPlaying = false;
+        let audio = new Audio();
+        let isCelebrationMode = false;
+
+        // Add error handling for audio
+        audio.addEventListener('error', (e) => {
+            console.error('Audio error:', e);
+            const trackName = document.getElementById('currentTrack');
+            trackName.innerHTML = `
+                <span style="color: #ff6b6b;">
+                    ❌ Music unavailable
+                    <br>
+                    <small style="font-size: 0.8em;">Please add your favorite romantic songs!</small>
+                </span>
+            `;
+        });
+
+        const celebrationAudio = new Audio();
+        celebrationAudio.src = 'static/music/celebration.mp3';
+        celebrationAudio.addEventListener('error', (e) => {
+            console.error('Celebration audio error:', e);
+            // Silently fail for celebration music
+        });
+        
+        const photoMusic = [
+            {
+                type: 'image',
+                source: 'static/images/couple1.jpg',
+                fallbackImage: 'https://placekitten.com/800/600',
+                music: 'static/music/romantic1.mp3',
+                title: 'Our First Date ❤️',
+                description: 'Remember that magical moment? The butterflies, the shy glances, and that instant connection we felt. Every smile you gave me lit up my world in ways I never knew possible.',
+                date: '📅 Our beginning: A story of destiny'
+            },
+            {
+                type: 'video',
+                source: 'static/videos/couple2.mp4',
+                thumbnail: 'static/images/couple2-thumb.jpg',
+                fallbackImage: 'https://placekitten.com/801/600',
+                music: 'static/music/romantic2.mp3',
+                title: 'Sweet Memories 💕',
+                description: 'Each moment with you is a treasure, each laugh we share is pure gold. From silly jokes to deep conversations, every second becomes magical when I\'m with you.',
+                date: '💫 Creating memories, one day at a time'
+            },
+            {
+                type: 'image',
+                source: 'static/images/couple3.jpg',
+                fallbackImage: 'https://placekitten.com/802/600',
+                music: 'static/music/romantic3.mp3',
+                title: 'Together Forever 💑',
+                description: 'With you, every tomorrow becomes brighter. Your love gives me strength, your smile gives me hope, and your heart makes my world complete. I can\'t wait to write our next chapter together.',
+                date: '🌟 Forever and always with you'
+            }
+        ];
+
+        function sayYes() {
+            isCelebrationMode = true;
+            
+            if (audio) {
+                audio.pause();
+                audio.currentTime = 0;
+            }
+            
+            document.querySelectorAll('.gallery-item').forEach(item => {
+                item.classList.remove('playing');
+                const playIndicator = item.querySelector('.play-indicator');
+                if (playIndicator) {
+                    playIndicator.innerHTML = '<i class="fas fa-play"></i>';
+                }
+            });
+            
+            document.querySelector('.message-text').innerHTML = `
+                <div style="font-size: 1.3rem; line-height: 2;">
+                    My heart is dancing with joy! <span class="heart-beat">❤️</span><br>
+                    Thank you for saying YES!<br><br>
+                    I promise to make every moment special,<br>
+                    to cherish your smile,<br>
+                    and to love you more each day.<br><br>
+                    Forever Yours <span class="heart-beat">❤️</span>
+                </div>
+            `;
+            
+            const noBtn = document.querySelector('.btn-no');
+            noBtn.style.transition = 'all 0.5s ease';
+            noBtn.style.opacity = '0';
+            setTimeout(() => noBtn.style.display = 'none', 500);
+            
+            const yesBtn = document.querySelector('.btn-yes');
+            yesBtn.innerHTML = '💖 I Love You! 💖';
+            yesBtn.style.background = '#ff6b6b';
+            yesBtn.onclick = null;
+            
+            // Show gallery with animation
+            setTimeout(() => {
+                const gallery = document.querySelector('.gallery');
+                gallery.style.display = 'grid';
+                // Trigger reflow
+                gallery.offsetHeight;
+                gallery.classList.add('visible');
+                
+                // Animate each gallery item
+                document.querySelectorAll('.gallery-item').forEach((item, index) => {
+                    item.style.setProperty('--item-index', index);
+                });
+            }, 1000);
+            
+            celebrationAudio.play()
+                .then(() => {
+                    isPlaying = true;
+                    updateMusicPlayer(true);
+                    document.getElementById('currentTrack').innerHTML = `
+                        <span style="color: #4CAF50;">
+                            🎉 Celebration Song
+                            <br>
+                            <small style="font-size: 0.8em;">Playing special music for you!</small>
+                        </span>
+                    `;
+                })
+                .catch(err => {
+                    console.error('Failed to play celebration music:', err);
+                    document.getElementById('currentTrack').innerHTML = `
+                        <span style="color: #ff6b6b;">
+                            💝 Love is in the air!
+                            <br>
+                            <small style="font-size: 0.8em;">Music optional - your love is all I need!</small>
+                        </span>
+                    `;
+                });
+        }
+
+        function playMusic(index) {
+            if (isCelebrationMode) {
+                return;
+            }
+
+            const items = document.querySelectorAll('.gallery-item');
+            items.forEach(item => {
+                item.classList.remove('playing');
+                const playIndicator = item.querySelector('.play-indicator');
+                if (playIndicator) {
+                    playIndicator.innerHTML = '<i class="fas fa-play"></i>';
+                }
+            });
+            
+            if (currentSongIndex === index && !audio.paused) {
+                audio.pause();
+                isPlaying = false;
+                updateMusicPlayer(false);
+                return;
+            }
+            
+            currentSongIndex = index;
+            audio.src = photoMusic[index].music;
+            
+            audio.play()
+                .then(() => {
+                    isPlaying = true;
+                    items[index].classList.add('playing');
+                    items[index].querySelector('.play-indicator').innerHTML = '<i class="fas fa-pause"></i>';
+                    updateMusicPlayer(true);
+                    updateCurrentTrack();
+                })
+                .catch(err => {
+                    console.error('Failed to play music:', err);
+                    document.getElementById('currentTrack').innerHTML = `
+                        <span style="color: #ff6b6b;">
+                            ❌ Music unavailable
+                            <br>
+                            <small style="font-size: 0.8em;">The love story continues silently...</small>
+                        </span>
+                    `;
+                });
+        }
+
+        function togglePlay() {
+            if (isCelebrationMode) {
+                if (celebrationAudio.paused) {
+                    celebrationAudio.play();
+                } else {
+                    celebrationAudio.pause();
+                }
+                isPlaying = !celebrationAudio.paused;
+            } else {
+                if (audio.paused) {
+                    if (audio.src === '') {
+                        audio.src = photoMusic[currentSongIndex].music;
+                    }
+                    audio.play();
+                } else {
+                    audio.pause();
+                }
+                isPlaying = !audio.paused;
+            }
+            updateMusicPlayer(isPlaying);
+        }
+
+        function setupGallery() {
+            const gallery = document.querySelector('.gallery');
+            gallery.style.display = 'none'; // Ensure gallery is hidden initially
+            
+            photoMusic.forEach((item, index) => {
+                const galleryItem = document.createElement('div');
+                galleryItem.className = 'gallery-item';
+                galleryItem.style.setProperty('--item-index', index);
+                
+                // Create description overlay with proper HTML structure
+                const descriptionOverlay = document.createElement('div');
+                descriptionOverlay.className = 'description-overlay';
+                const descriptionText = document.createElement('div');
+                descriptionText.className = 'description-text';
+                descriptionText.innerHTML = `
+                    <h3>${item.title}</h3>
+                    <p>${item.description}</p>
+                    <div class="memory-date">${item.date || ''}</div>
+                `;
+                descriptionOverlay.appendChild(descriptionText);
+                
+                if (item.type === 'video') {
+                    galleryItem.classList.add('video-item');
+                    const video = document.createElement('video');
+                    video.src = item.source;
+                    video.muted = true;
+                    video.loop = true;
+                    video.playsInline = true;
+                    video.poster = item.thumbnail;
+                    video.setAttribute('playsinline', '');
+                    video.setAttribute('webkit-playsinline', '');
+                    video.setAttribute('loading', 'eager');
+                    
+                    video.addEventListener('error', (e) => {
+                        console.error('Video error:', e);
+                        galleryItem.innerHTML = `
+                            <div class="fallback-content">
+                                <img src="${item.fallbackImage}" alt="${item.title}">
+                                <div class="fallback-message">Video coming soon...</div>
+                            </div>
+                        `;
+                    });
+
+                    galleryItem.appendChild(video);
+                    galleryItem.appendChild(descriptionOverlay);
+                    
+                    galleryItem.addEventListener('click', (e) => {
+                        if (!e.target.closest('.video-controls')) {
+                            showVideoModal(item.source, descriptionText.innerHTML);
+                            playMusic(index);
+                            toggleDescription(galleryItem);
+                        }
+                    });
+                } else {
+                    const img = document.createElement('img');
+                    img.src = item.source;
+                    img.alt = item.title;
+                    img.draggable = false;
+                    
+                    img.onerror = () => {
+                        img.src = item.fallbackImage;
+                        img.onerror = null;
+                    };
+                    
+                    galleryItem.appendChild(img);
+                    galleryItem.appendChild(descriptionOverlay);
+                    
+                    galleryItem.addEventListener('click', () => {
+                        showModal(item.source, descriptionText.innerHTML);
+                        playMusic(index);
+                        toggleDescription(galleryItem);
+                    });
+                }
+                
+                gallery.appendChild(galleryItem);
+            });
+        }
+
+        function showModal(imageSrc, description) {
+            const modal = document.getElementById('photoModal');
+            const modalContent = modal.querySelector('.modal-content');
+            
+            modalContent.innerHTML = `
+                <button class="modal-close" onclick="closeModal(event)">×</button>
+                <img src="${imageSrc}" alt="Full size image">
+                <div class="modal-description">
+                    <div class="description-text">${description || ''}</div>
+                </div>
+            `;
+            
+            modal.style.display = 'flex';
+            
+            requestAnimationFrame(() => {
+                modalContent.classList.add('show-description');
+            });
+        }
+
+        function showVideoModal(videoSrc, description) {
+            const modal = document.getElementById('photoModal');
+            const modalContent = modal.querySelector('.modal-content');
+            
+            modalContent.innerHTML = `
+                <button class="modal-close" onclick="closeModal(event)">×</button>
+                <video src="${videoSrc}" controls autoplay>
+                    Your browser does not support the video tag.
+                </video>
+                <div class="modal-description">
+                    <div class="description-text">${description || ''}</div>
+                </div>
+            `;
+            
+            modal.style.display = 'flex';
+            
+            requestAnimationFrame(() => {
+                modalContent.classList.add('show-description');
+            });
+        }
+
+        function closeModal(event) {
+            const modal = event.target.closest('.modal');
+            const modalContent = modal.querySelector('.modal-content');
+            const video = modalContent.querySelector('video');
+            
+            // Stop video if present
+            if (video) {
+                video.pause();
+                video.currentTime = 0;
+            }
+            
+            // Hide all descriptions
+            document.querySelectorAll('.gallery-item').forEach(item => {
+                item.classList.remove('show-description');
+                const overlay = item.querySelector('.description-overlay');
+                if (overlay) {
+                    overlay.classList.remove('show');
+                }
+            });
+            
+            modalContent.classList.remove('show-description');
+            
+            setTimeout(() => {
+                modal.style.display = 'none';
+            }, 300);
+        }
+
+        // Handle clicking outside modal
+        document.addEventListener('click', function(event) {
+            const modal = document.getElementById('photoModal');
+            if (event.target === modal) {
+                closeModal({ target: modal });
+            }
+        });
+
+        function toggleDescription(galleryItem) {
+            const wasShowing = galleryItem.classList.contains('show-description');
+            
+            // Hide all descriptions first
+            document.querySelectorAll('.gallery-item').forEach(item => {
+                item.classList.remove('show-description');
+                const overlay = item.querySelector('.description-overlay');
+                if (overlay) {
+                    overlay.classList.remove('show');
+                }
+                
+                // Pause any playing videos
+                const video = item.querySelector('video');
+                if (video) {
+                    video.pause();
+                    const playBtn = item.querySelector('.video-btn');
+                    if (playBtn) {
+                        playBtn.innerHTML = '<i class="fas fa-play"></i>';
+                    }
+                }
+            });
+            
+            // Show this description if it wasn't showing before
+            if (!wasShowing) {
+                galleryItem.classList.add('show-description');
+                const overlay = galleryItem.querySelector('.description-overlay');
+                if (overlay) {
+                    overlay.classList.add('show');
+                }
+            }
+        }
+
+        function updateMusicPlayer(playing) {
+            const playPauseBtn = document.querySelector('.play-pause');
+            if (playing) {
+                playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
+            } else {
+                playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+            }
+        }
+
+        function updateCurrentTrack() {
+            if (!isCelebrationMode) {
+                const trackName = photoMusic[currentSongIndex].title;
+                document.getElementById('currentTrack').textContent = trackName;
+            }
+        }
+
+        function previousTrack() {
+            currentSongIndex = (currentSongIndex - 1 + photoMusic.length) % photoMusic.length;
+            playMusic(currentSongIndex);
+        }
+
+        function nextTrack() {
+            currentSongIndex = (currentSongIndex + 1) % photoMusic.length;
+            playMusic(currentSongIndex);
+        }
+
+        function updateProgress(currentTime, duration) {
+            const progress = document.getElementById('progressBar');
+            const percentage = (currentTime / duration) * 100;
+            progress.style.width = `${percentage}%`;
+        }
+
+        audio.addEventListener('timeupdate', () => {
+            updateProgress(audio.currentTime, audio.duration);
+        });
+
+        audio.addEventListener('ended', () => {
+            nextTrack();
+        });
+
+        document.querySelector('.progress-bar').addEventListener('click', (e) => {
+            const progressBar = e.currentTarget;
+            const clickPosition = e.offsetX / progressBar.offsetWidth;
+            audio.currentTime = clickPosition * audio.duration;
+        });
+
+        function moveButton(btn) {
+            const container = document.querySelector('.container');
+            const btnRect = btn.getBoundingClientRect();
+            const containerRect = container.getBoundingClientRect();
+            
+            const maxX = containerRect.width - btnRect.width;
+            const maxY = containerRect.height - btnRect.height;
+            
+            const randomX = Math.random() * maxX;
+            const randomY = Math.random() * maxY;
+            
+            btn.style.position = 'absolute';
+            btn.style.left = randomX + 'px';
+            btn.style.top = randomY + 'px';
+        }
+
+        function stopAllMusic() {
+            if (audio) {
+                audio.pause();
+                audio.currentTime = 0;
+            }
+            
+            document.querySelectorAll('.gallery-item').forEach(item => {
+                item.classList.remove('playing');
+                const playIndicator = item.querySelector('.play-indicator');
+                if (playIndicator) {
+                    playIndicator.innerHTML = '<i class="fas fa-play"></i>';
+                }
+            });
+            
+            isPlaying = false;
+            updateMusicPlayer(false);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            setupGallery();
+            
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    closeModal({ target: document.getElementById('photoModal') });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
