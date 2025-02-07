@@ -39,6 +39,169 @@
             margin-bottom: 100px; /* Space for music player */
         }
 
+        .message {
+            background: var(--surface-color);
+            padding: 2.5rem;
+            border-radius: 8px;
+            max-width: 500px;
+            text-align: center;
+            line-height: 1.8;
+            margin: 2rem auto;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .message-text {
+            color: var(--text-color);
+            font-size: 1.2rem;
+            line-height: 1.8;
+            white-space: pre-line;
+        }
+
+        .music-player {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: #181818;
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border-top: 1px solid #282828;
+        }
+
+        .music-controls {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            min-width: 180px;
+        }
+
+        .music-btn {
+            background: none;
+            border: none;
+            color: #b3b3b3;
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 0;
+            transition: all 0.2s ease;
+        }
+
+        .music-btn:hover {
+            color: var(--text-color);
+            transform: scale(1.1);
+        }
+
+        .music-btn.play-pause {
+            width: 32px;
+            height: 32px;
+            background: var(--text-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--background-color);
+            font-size: 0.8rem;
+        }
+
+        .music-btn.play-pause:hover {
+            transform: scale(1.05);
+            background: var(--text-color);
+        }
+
+        .progress-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .progress-bar {
+            flex: 1;
+            height: 4px;
+            background: #4d4d4d;
+            border-radius: 2px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .progress-bar:hover .progress {
+            background-color: var(--primary-color);
+        }
+
+        .progress {
+            height: 100%;
+            background: #b3b3b3;
+            border-radius: 2px;
+            position: relative;
+        }
+
+        .now-playing {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            min-width: 180px;
+            text-align: right;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 500px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-yes {
+            background: var(--primary-color);
+            color: black;
+            min-width: 160px;
+        }
+
+        .btn-yes:hover {
+            background: var(--secondary-color);
+            transform: scale(1.04);
+        }
+
+        .btn-no {
+            background: transparent;
+            color: var(--text-color);
+            border: 1px solid var(--text-secondary);
+            min-width: 160px;
+        }
+
+        .btn-no:hover {
+            border-color: var(--text-color);
+            transform: scale(1.04);
+        }
+
+        @keyframes heartBeat {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .heart-beat {
+            animation: heartBeat 1s infinite;
+            display: inline-block;
+        }
+
         .gallery {
             display: none; /* Hidden by default */
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -203,170 +366,6 @@
             transform: none;
         }
 
-        .message {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(18, 18, 18, 0.9);
-            padding: 2rem;
-            border-radius: 15px;
-            text-align: center;
-            max-width: 90%;
-            width: 500px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            z-index: 1000;
-        }
-
-        .message-text {
-            font-family: 'Dancing Script', cursive;
-            font-size: 1.5rem;
-            color: #fff;
-            margin-bottom: 2rem;
-            line-height: 1.6;
-            white-space: pre-line;
-        }
-
-        .buttons {
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-            margin-top: 2rem;
-        }
-
-        .btn {
-            font-family: 'Poppins', sans-serif;
-            font-size: 1.2rem;
-            padding: 0.8rem 1.5rem;
-            border: none;
-            border-radius: 25px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .btn-yes {
-            background: #ff4b6e;
-            color: white;
-            font-weight: bold;
-            box-shadow: 0 4px 15px rgba(255, 75, 110, 0.3);
-        }
-
-        .btn-yes:hover {
-            transform: scale(1.05);
-            box-shadow: 0 6px 20px rgba(255, 75, 110, 0.4);
-        }
-
-        .btn-no {
-            background: #333;
-            color: white;
-            opacity: 0.8;
-        }
-
-        .btn-no:hover {
-            opacity: 1;
-        }
-
-        .heart-beat {
-            display: inline-block;
-            animation: heartBeat 1.2s infinite;
-        }
-
-        @keyframes heartBeat {
-            0% { transform: scale(1); }
-            14% { transform: scale(1.3); }
-            28% { transform: scale(1); }
-            42% { transform: scale(1.3); }
-            70% { transform: scale(1); }
-        }
-
-        .music-player {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background: #181818;
-            padding: 1rem 2rem;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            border-top: 1px solid #282828;
-        }
-
-        .music-controls {
-            display: flex;
-            align-items: center;
-            gap: 2rem;
-            min-width: 180px;
-        }
-
-        .music-btn {
-            background: none;
-            border: none;
-            color: #b3b3b3;
-            cursor: pointer;
-            font-size: 1rem;
-            padding: 0;
-            transition: all 0.2s ease;
-        }
-
-        .music-btn:hover {
-            color: var(--text-color);
-            transform: scale(1.1);
-        }
-
-        .music-btn.play-pause {
-            width: 32px;
-            height: 32px;
-            background: var(--text-color);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--background-color);
-            font-size: 0.8rem;
-        }
-
-        .music-btn.play-pause:hover {
-            transform: scale(1.05);
-            background: var(--text-color);
-        }
-
-        .progress-container {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .progress-bar {
-            flex: 1;
-            height: 4px;
-            background: #4d4d4d;
-            border-radius: 2px;
-            cursor: pointer;
-            position: relative;
-        }
-
-        .progress-bar:hover .progress {
-            background-color: var(--primary-color);
-        }
-
-        .progress {
-            height: 100%;
-            background: #b3b3b3;
-            border-radius: 2px;
-            position: relative;
-        }
-
-        .now-playing {
-            color: var(--text-secondary);
-            font-size: 0.8rem;
-            min-width: 180px;
-            text-align: right;
-        }
-
         @media (max-width: 768px) {
             .gallery {
                 grid-template-columns: 1fr;
@@ -500,9 +499,8 @@
                 source: 'static/images/couple1.jpg',
                 fallbackImage: 'https://placekitten.com/800/600',
                 music: 'static/music/romantic1.mp3',
-                title: 'Our First Date ❤️',
-                description: 'Remember that magical moment? The butterflies, the shy glances, and that instant connection we felt. Every smile you gave me lit up my world in ways I never knew possible.',
-                date: '📅 Our beginning: A story of destiny'
+                title: 'Our First Date 💝',
+                description: 'From the moment I first saw you, I knew there was something special. Your smile brightened my world, and your presence made my heart skip a beat. That magical first date will forever be etched in my memory.',
             },
             {
                 type: 'video',
@@ -511,17 +509,15 @@
                 fallbackImage: 'https://placekitten.com/801/600',
                 music: 'static/music/romantic2.mp3',
                 title: 'Sweet Memories 💕',
-                description: 'Each moment with you is a treasure, each laugh we share is pure gold. From silly jokes to deep conversations, every second becomes magical when I\'m with you.',
-                date: '💫 Creating memories, one day at a time'
+                description: 'Every moment with you is a treasure. Your love fills my life with joy and meaning. I cherish all our memories together, from the smallest giggles to the biggest adventures.',
             },
             {
                 type: 'image',
-                source: 'static/images/couple3.jpg',
+                source: '/static/images/couple3.jpg',
                 fallbackImage: 'https://placekitten.com/802/600',
                 music: 'static/music/romantic3.mp3',
                 title: 'Together Forever 💑',
                 description: 'With you, every tomorrow becomes brighter. Your love gives me strength, your smile gives me hope, and your heart makes my world complete. I can\'t wait to write our next chapter together.',
-                date: '🌟 Forever and always with you'
             }
         ];
 
