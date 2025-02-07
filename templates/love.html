@@ -593,6 +593,8 @@
                         </span>
                     `;
                 });
+            
+            playAllMusic();
         }
 
         function playMusic(index) {
@@ -926,6 +928,33 @@
             updateMusicPlayer(false);
         }
 
+        let currentTrack = 0;
+        const galleryItems = document.querySelectorAll('.gallery-item');
+
+        function playAllMusic() {
+            currentTrack = 0;
+            playNextTrack();
+        }
+
+        function playNextTrack() {
+            if (currentTrack >= galleryItems.length) {
+                currentTrack = 0;
+            }
+            const item = galleryItems[currentTrack];
+            if (item.querySelector('img').src) {
+                audio.src = photoMusic[currentTrack].music;
+                audio.play();
+                isPlaying = true;
+                updateMusicPlayer(isPlaying);
+                updateCurrentTrack();
+            }
+            currentTrack++;
+        }
+
+        audio.addEventListener('ended', () => {
+            playNextTrack();
+        });
+
         document.addEventListener('DOMContentLoaded', () => {
             setupGallery();
             
@@ -933,6 +962,31 @@
                 if (e.key === 'Escape') {
                     closeModal({ target: document.getElementById('photoModal') });
                 }
+            });
+            
+            document.querySelector('.btn-yes').addEventListener('click', function() {
+                const mainContent = document.querySelector('.message');
+                const gallery = document.querySelector('.gallery');
+                const thankYouMessage = document.querySelector('.message-text');
+                
+                // Hide main content and buttons
+                mainContent.style.display = 'none';
+                this.style.display = 'none';
+                document.querySelector('.btn-no').style.display = 'none';
+                
+                // Show thank you message and gallery
+                thankYouMessage.style.display = 'block';
+                gallery.style.display = 'grid';
+                
+                // Start playing music
+                playAllMusic();
+                
+                // Trigger confetti
+                confetti({
+                    particleCount: 100,
+                    spread: 70,
+                    origin: { y: 0.6 }
+                });
             });
         });
     </script>
